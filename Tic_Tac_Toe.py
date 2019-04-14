@@ -17,7 +17,7 @@ def display_board(board):
 def player_input():
 	marker = ''
 	while not (marker == 'X' or marker == 'O'):
-		marker = raw_input("Player 1: Do you want to be X or O? ").upper()
+		marker = input("Player 1: Do you want to be X or O? ").upper()
 
 	if marker == 'X':
 		return ('X', 'O')
@@ -27,7 +27,7 @@ def player_input():
 def player_choice(board, role):
 	position = ''
 	while position not in '1 2 3 4 5 6 7 8 9'.split() or not space_check(board, int(position)):
-		position = raw_input(role + " Choose your next position: (1-9) ")
+		position = input(role + " Choose your next position: (1-9) ")
 	return int(position)
 
 def place_marker(board, marker, position):
@@ -37,7 +37,7 @@ def win_check(board,mark):
     return ((board[7] == mark and board[8] == mark and board[9] == mark) or # across the top
     (board[4] == mark and board[5] == mark and board[6] == mark) or # across the middle
     (board[1] == mark and board[2] == mark and board[3] == mark) or # across the bottom
-    (board[7] == mark and board[4] == mark and board[1] == mark) or # down the middle
+    (board[7] == mark and board[4] == mark and board[1] == mark) or # down the left side
     (board[8] == mark and board[5] == mark and board[2] == mark) or # down the middle
     (board[9] == mark and board[6] == mark and board[3] == mark) or # down the right side
     (board[7] == mark and board[5] == mark and board[3] == mark) or # diagonal
@@ -59,7 +59,7 @@ def full_board_check(board):
 	return True
 
 def replay():
-	return raw_input("Do you want to play again? Enter Yes or No: ").lower().startswith('y')
+	return input("Do you want to play again? Enter Yes or No: ").lower().startswith('y')
 
 
 print('Welcome to Tic Tac Toe!')
