@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import random
 
 # Hearts, Diamonds,Clubs,Spades
@@ -27,7 +26,7 @@ class Card:
         return self.rank
 
     def draw(self):
-        print (self.suit + self.rank)
+        print (self)
 
 
 class Deck:
@@ -46,9 +45,9 @@ class Deck:
     def __str__(self):
         deck_show = ""
         for card in self.deck:
-            deck_show += card.__str__() + " "
+            deck_show += '\n' + card.__str__()
 
-        return deck_show
+        return 'The deck has:' + deck_show
 
 
 class Player:
@@ -59,25 +58,26 @@ class Player:
         self.bet = 0
 
     def make_bet(self):
-        chance = True
         bet_tmp = 0
-        while self.bet == 0 or chance:
+        while True:
             try:
-                bet_tmp = int(raw_input("What amount of chips would you like to bet? (Enter whole integer please): "))
+                bet_tmp = int(input("What amount of chips would you like to bet? (Enter whole integer please): "))
             except ValueError:
                 print("Sorry, the amount you entered is not allowed. ")
-                continue
-            if 0 <= bet_tmp <= self.total - self.bet:
-                self.bet += bet_tmp
-                chance = False
             else:
-                print "Invalid bet, you only have", self.total - self.bet, "remaining"
+                if bet_tmp < 0:
+                    print("Invalid bet. You cannot enter negative value. ")
+                elif bet_tmp > self.total - self.bet:
+                    print("Invalid bet, you only have", self.total - self.bet, "remaining")
+                else:
+                    self.bet += bet_tmp
+                    break
         return bet_tmp
 
     def __str__(self):
         player_show = ""
         for card in self.cards:
-            player_show += card.__str__() + " "
+            player_show += '/n' + card.__str__()
 
         return player_show
 
@@ -90,7 +90,7 @@ class Player:
     def draw(self, hidden):
         if hidden:
             starting_card = 1
-            print Card('X', 'X')
+            print('X')
         else:
             starting_card = 0
         for i in range(starting_card, len(self.cards)):
@@ -98,31 +98,33 @@ class Player:
 
 
 def deal_cards(deck, player, dealer):
-    print "Player get total", player.total, "money!!"
-    chip_pool = 0
+    print ("Player get total", player.total, "money!!")
     playing = True
+    chip_pool = 0
     chip_pool += player.make_bet() * 2
-    print "Chip pool now has", chip_pool, "dollars"
+    print ("Chip pool now has", chip_pool, "dollars")
     player.card_add(deck.deal())
     player.card_add(deck.deal())
     dealer.card_add(deck.deal())
     dealer.card_add(deck.deal())
     while playing:
-        print '***************'
+        print ('***************')
         # Display Player Hand
         print('Player Hand is: ')
         player.draw(False)
-        print 'Player Hand value is:', player.value, '\n'
+        print ('Player Hand value is:', player.value, '\n')
         # Display Dealer Hand
-        print('Dealer Hand is: \n'),
+        print('Dealer Hand is: '),
         dealer.draw(hidden=True)
-        print ""
-        action = raw_input("Hit or Stand? Press either h or s: ")
+        action = input("Hit or Stand? Press either h or s: ")
         if action == 'h':
-            chip_pool, playing = hit(chip_pool, dealer, deck, player, playing)
+            playing = hit(chip_pool, dealer, deck, player, playing)
         elif action == 's':
             playing = stand(chip_pool, dealer, deck, player, playing)
-    again = raw_input("Would you like to play again? Press either y or n: ")
+    if player.total <= 0:
+        print('You are out of money. ')
+        return False
+    again = input("Would you like to play again? Press either y or n: ")
     if again.startswith('y'):
         reset_player(player)
         return True
@@ -132,46 +134,46 @@ def deal_cards(deck, player, dealer):
 
 def hit(chip_pool, dealer, deck, player, playing):
     chip_pool += player.make_bet() * 2
-    print "Chip pool now has", chip_pool, "dollars"
+    print ("Chip pool now has", chip_pool, "dollars")
     player.card_add(deck.deal())
     if player.value > 21:
-        print 'Busted! Player Hand is: '
+        print ('Busted! Player Hand is: ')
         player.draw(False)
-        print 'Player Hand value is:', player.value, '\n'
+        print ('Player Hand value is:', player.value, '\n')
         player.total -= chip_pool
         playing = False
-        print "Player now has total", player.total, "money!!"
+        print ("Player now has total", player.total, "money!!")
     else:
         dealer.card_add(deck.deal())
-    return chip_pool, playing
+    return playing
 
 
 def stand(chip_pool, dealer, deck, player, playing):
     while dealer.value < 17:
         dealer.card_add(deck.deal())
-    print '***************'
+    print ('***************')
     # Display Player Hand
     print('Player Hand is: ')
     player.draw(False)
-    print 'Player Hand value is:', player.value, '\n'
+    print ('Player Hand value is:', player.value, '\n')
     # Display Dealer Hand
-    print('Dealer Hand is: \n'),
+    print('Dealer Hand is: '),
     dealer.draw(False)
-    print 'Dealer Hand value is:', dealer.value, '\n'
+    print ('Dealer Hand value is:', dealer.value, '\n')
     if dealer.value > 21:
-        print"Dealer busts! You win!"
+        print ("Dealer busts! You win!")
         player.total += chip_pool
     elif player.value > dealer.value:
-        print"You beat the dealer, you win!"
+        print ("You beat the dealer, you win!")
         player.total += chip_pool
     elif player.value < dealer.value:
-        print "Dealer Wins!"
+        print ("Dealer Wins!")
         player.total -= chip_pool
     else:
-        print "Tied up, push!"
+        print ("Tied up, push!")
         player.total += chip_pool / 2
     playing = False
-    print "Player now has total", player.total, "money!!"
+    print ("Player now has total", player.total, "money!!")
     return playing
 
 
@@ -182,9 +184,9 @@ def reset_player(player):
 
 
 def intro():
-    statement = "Welcome to BlackJack! Get as close to 21 as you can without going over! \n \
+    statement = "Welcome to BlackJack! Get as close to 21 as you can without going over! \n\
 Dealer hits until she reaches 17. Aces count as 1 or 11. \n"
-    print statement
+    print (statement)
 
 
 def start_game():
@@ -199,5 +201,5 @@ def start_game():
     print("See you next time. Bye")
     exit()
 
-
-start_game()
+if __name__ == '__main__':
+    start_game()
