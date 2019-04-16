@@ -118,7 +118,7 @@ def deal_cards(deck, player, dealer):
         dealer.draw(hidden=True)
         action = input("Hit or Stand? Press either h or s: ")
         if action == 'h':
-            playing = hit(chip_pool, dealer, deck, player, playing)
+            playing, chip_pool = hit(chip_pool, dealer, deck, player, playing)
         elif action == 's':
             playing = stand(chip_pool, dealer, deck, player, playing)
     if player.total <= 0:
@@ -145,7 +145,7 @@ def hit(chip_pool, dealer, deck, player, playing):
         print ("Player now has total", player.total, "money!!")
     else:
         dealer.card_add(deck.deal())
-    return playing
+    return playing, chip_pool
 
 
 def stand(chip_pool, dealer, deck, player, playing):
